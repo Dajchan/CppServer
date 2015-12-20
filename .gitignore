@@ -7,43 +7,44 @@
 
 
 # libmicrohttpd
-/deps/libmicrohttpd-0.9.39/config.log
-/deps/libmicrohttpd-0.9.39/MHD_config.h
-/deps/libmicrohttpd-0.9.39/Makefile
-/deps/libmicrohttpd-0.9.39/config.status
-/deps/libmicrohttpd-0.9.39/contrib/Makefile
-/deps/libmicrohttpd-0.9.39/doc/Makefile
-/deps/libmicrohttpd-0.9.39/doc/doxygen/Makefile
-/deps/libmicrohttpd-0.9.39/doc/examples/.deps/
-/deps/libmicrohttpd-0.9.39/doc/examples/Makefile
-/deps/libmicrohttpd-0.9.39/libmicrohttpd.pc
-/deps/libmicrohttpd-0.9.39/libmicrospdy.pc
-/deps/libmicrohttpd-0.9.39/libtool
-/deps/libmicrohttpd-0.9.39/m4/Makefile
-/deps/libmicrohttpd-0.9.39/src/Makefile
-/deps/libmicrohttpd-0.9.39/src/examples/.deps/
-/deps/libmicrohttpd-0.9.39/src/examples/Makefile
-/deps/libmicrohttpd-0.9.39/src/include/Makefile
-/deps/libmicrohttpd-0.9.39/src/microhttpd/.deps/
-/deps/libmicrohttpd-0.9.39/src/microhttpd/.libs/
-/deps/libmicrohttpd-0.9.39/src/microhttpd/Makefile
-/deps/libmicrohttpd-0.9.39/src/microhttpd/libmicrohttpd*
-/deps/libmicrohttpd-0.9.39/src/microhttpd/microhttpd_dll_res.rc
-/deps/libmicrohttpd-0.9.39/src/microspdy/.deps/
-/deps/libmicrohttpd-0.9.39/src/microspdy/Makefile
-/deps/libmicrohttpd-0.9.39/src/platform/.deps/
-/deps/libmicrohttpd-0.9.39/src/platform/Makefile
-/deps/libmicrohttpd-0.9.39/src/spdy2http/.deps/
-/deps/libmicrohttpd-0.9.39/src/spdy2http/Makefile
-/deps/libmicrohttpd-0.9.39/src/testcurl/.deps/
-/deps/libmicrohttpd-0.9.39/src/testcurl/Makefile
-/deps/libmicrohttpd-0.9.39/src/testcurl/https/.deps/
-/deps/libmicrohttpd-0.9.39/src/testcurl/https/Makefile
-/deps/libmicrohttpd-0.9.39/src/testspdy/.deps/
-/deps/libmicrohttpd-0.9.39/src/testspdy/Makefile
-/deps/libmicrohttpd-0.9.39/src/testzzuf/.deps/
-/deps/libmicrohttpd-0.9.39/src/testzzuf/Makefile
-/deps/libmicrohttpd-0.9.39/stamp-h1
+# /deps/libmicrohttpd-0.9.39/config.log
+# /deps/libmicrohttpd-0.9.39/MHD_config.h
+# /deps/libmicrohttpd-0.9.39/Makefile
+# /deps/libmicrohttpd-0.9.39/config.status
+# /deps/libmicrohttpd-0.9.39/contrib/Makefile
+# /deps/libmicrohttpd-0.9.39/doc/Makefile
+# /deps/libmicrohttpd-0.9.39/doc/doxygen/Makefile
+# /deps/libmicrohttpd-0.9.39/doc/examples/.deps/
+# /deps/libmicrohttpd-0.9.39/doc/examples/Makefile
+# /deps/libmicrohttpd-0.9.39/libmicrohttpd.pc
+# /deps/libmicrohttpd-0.9.39/libmicrospdy.pc
+# /deps/libmicrohttpd-0.9.39/libtool
+# /deps/libmicrohttpd-0.9.39/m4/Makefile
+# /deps/libmicrohttpd-0.9.39/src/Makefile
+# /deps/libmicrohttpd-0.9.39/src/examples/.deps/
+# /deps/libmicrohttpd-0.9.39/src/examples/Makefile
+# /deps/libmicrohttpd-0.9.39/src/include/Makefile
+# /deps/libmicrohttpd-0.9.39/src/microhttpd/.deps/
+# /deps/libmicrohttpd-0.9.39/src/microhttpd/.libs/
+# /deps/libmicrohttpd-0.9.39/src/microhttpd/Makefile
+# /deps/libmicrohttpd-0.9.39/src/microhttpd/libmicrohttpd*
+# /deps/libmicrohttpd-0.9.39/src/microhttpd/microhttpd_dll_res.rc
+# /deps/libmicrohttpd-0.9.39/src/microspdy/.deps/
+# /deps/libmicrohttpd-0.9.39/src/microspdy/Makefile
+# /deps/libmicrohttpd-0.9.39/src/platform/.deps/
+# /deps/libmicrohttpd-0.9.39/src/platform/Makefile
+# /deps/libmicrohttpd-0.9.39/src/spdy2http/.deps/
+# /deps/libmicrohttpd-0.9.39/src/spdy2http/Makefile
+# /deps/libmicrohttpd-0.9.39/src/testcurl/.deps/
+# /deps/libmicrohttpd-0.9.39/src/testcurl/Makefile
+# /deps/libmicrohttpd-0.9.39/src/testcurl/https/.deps/
+# /deps/libmicrohttpd-0.9.39/src/testcurl/https/Makefile
+# /deps/libmicrohttpd-0.9.39/src/testspdy/.deps/
+# /deps/libmicrohttpd-0.9.39/src/testspdy/Makefile
+# /deps/libmicrohttpd-0.9.39/src/testzzuf/.deps/
+# /deps/libmicrohttpd-0.9.39/src/testzzuf/Makefile
+# /deps/libmicrohttpd-0.9.39/stamp-h1
+# /deps/libs/microhttpd/
 
 # data files
 test_ldb
