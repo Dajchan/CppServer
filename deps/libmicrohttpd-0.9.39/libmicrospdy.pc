@@ -1,5 +1,5 @@
-prefix=/Users/skar/Projects/pixelflut/PixSyncLib/deps/libs/microhttpd
-exec_prefix=/Users/skar/Projects/pixelflut/PixSyncLib/deps/libs/microhttpd
+prefix=/Users/skar/Projects/pixelflut/CppServer/deps/libs/microhttpd
+exec_prefix=/Users/skar/Projects/pixelflut/CppServer/deps/libs/microhttpd
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include
 

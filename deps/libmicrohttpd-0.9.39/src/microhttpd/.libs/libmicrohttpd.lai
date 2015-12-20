@@ -38,4 +38,4 @@ dlopen=''
 dlpreopen=''
 
 # Directory that this library needs to be installed in:
-libdir='/Users/skar/Projects/pixelflut/PixSyncLib/deps/libs/microhttpd/lib'
+libdir='/Users/skar/Projects/pixelflut/CppServer/deps/libs/microhttpd/lib'

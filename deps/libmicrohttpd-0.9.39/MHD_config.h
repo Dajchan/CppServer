@@ -106,25 +106,25 @@
 #define HAVE_NETINET_TCP_H 1
 
 /* Define to 1 if you have the <openssl/engine.h> header file. */
-#define HAVE_OPENSSL_ENGINE_H 1
+/* #undef HAVE_OPENSSL_ENGINE_H */
 
 /* Define to 1 if you have the <openssl/err.h> header file. */
-#define HAVE_OPENSSL_ERR_H 1
+/* #undef HAVE_OPENSSL_ERR_H */
 
 /* Define to 1 if you have the <openssl/evp.h> header file. */
-#define HAVE_OPENSSL_EVP_H 1
+/* #undef HAVE_OPENSSL_EVP_H */
 
 /* Define to 1 if you have the <openssl/pem.h> header file. */
-#define HAVE_OPENSSL_PEM_H 1
+/* #undef HAVE_OPENSSL_PEM_H */
 
 /* Define to 1 if you have the <openssl/rand.h> header file. */
-#define HAVE_OPENSSL_RAND_H 1
+/* #undef HAVE_OPENSSL_RAND_H */
 
 /* Define to 1 if you have the <openssl/rsa.h> header file. */
-#define HAVE_OPENSSL_RSA_H 1
+/* #undef HAVE_OPENSSL_RSA_H */
 
 /* Define to 1 if you have the <openssl/sha.h> header file. */
-#define HAVE_OPENSSL_SHA_H 1
+/* #undef HAVE_OPENSSL_SHA_H */
 
 /* Define to 1 if you have the <poll.h> header file. */
 #define HAVE_POLL_H 1
