@@ -4,7 +4,7 @@
 /libs/
 /deps/build/
 /deps/libs/
-
+variables.gypi
 
 # libmicrohttpd
 /deps/libmicrohttpd-0.9.39/config.log
