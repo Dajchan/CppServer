@@ -1,0 +1,13 @@
+prefix=/Users/skar/Projects/pixelflut/PixSyncLib/deps/libs/microhttpd
+exec_prefix=/Users/skar/Projects/pixelflut/PixSyncLib/deps/libs/microhttpd
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: libmicrohttpd
+Description: A library for creating an embedded HTTP server
+Version: 0.9.39
+Requires:
+Conflicts:
+Libs: -L${libdir} -lmicrohttpd
+Libs.private:  
+Cflags: -I${includedir}
