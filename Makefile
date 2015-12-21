@@ -1,7 +1,5 @@
 DEV_VERSION := $(shell cat VERSION)
 
-# MULTIPLATFORM := 1
-# RELEASE=false
 JOBS := 12
 
 ifndef CC
@@ -121,22 +119,16 @@ _variables: Makefile
 	@echo "    'LOCAL_PLATFORM': '$(LOCAL_PLATFORM)',"               >>variables.gypi
 	@echo "  },"                                                     >>variables.gypi
 	@echo "}"                                                        >>variables.gypi              >>variables.gypi	
-
-./deps/json11:
-	git submodule update --init
 	
-deps/onig-5.9.5/Makefile:
-	cd deps/onig-5.9.5/; ./configure
-	
-dev_xcode: deps/gyp deps/json11 px.gyp
+dev_xcode: deps/gyp px.gyp
 	deps/gyp/gyp px.gyp -DOS=darwin --depth=. -f xcode --generator-output=./dev_xcode -Icommon.gypi -Ivariables.gypi	
 
 # ----------------- CREATE BUILD DIRECTORIES --------------------
 	
-build_server: deps/gyp deps/json11 px.gyp
+build_server: deps/gyp px.gyp
 	deps/gyp/gyp px.gyp -DOS=$(LOCAL_PLATFORM) --depth=. --format=make --generator-output=./build/server --root-target cpp_server -Icommon.gypi -Ivariables.gypi
 
-build_test: deps/gyp deps/json11 px.gyp
+build_test: deps/gyp px.gyp
 	deps/gyp/gyp px.gyp -DOS=$(LOCAL_PLATFORM) --depth=. --format=make --generator-output=./build/test --root-target test -Icommon.gypi -Ivariables.gypi
 
 

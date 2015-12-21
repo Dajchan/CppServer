@@ -4,6 +4,7 @@
 /libs/
 /deps/build/
 /deps/libs/
+/deps/gyp
 variables.gypi
 
 # libmicrohttpd
