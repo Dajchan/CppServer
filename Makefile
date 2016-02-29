@@ -51,7 +51,6 @@ LOCAL_ARCH := $(shell uname -m)
 clean_build:
 	-rm -rf build/
 	-rm -rf deps/build/
-	-rm test.sqlite
 	make cleanup_gyp
 
 clean_setup: clean_microhttpd
@@ -112,7 +111,7 @@ gyp: ./deps/gyp
 
 ./deps/gyp:
 	git clone --depth 1 https://chromium.googlesource.com/external/gyp.git ./deps/gyp
-	
+
 _variables: Makefile
 	@echo "{"                                                        >variables.gypi
 	@echo "  'variables': {"                                         >>variables.gypi
@@ -159,7 +158,9 @@ compile_server: build_server
 
 # ----------------- Packaging -----------------------------------
 
-all: compile_server
+server: compile_server
+
+all: server
 
 # --------------------- Other Stuff ---------------------------
 
