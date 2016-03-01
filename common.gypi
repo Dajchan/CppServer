@@ -35,7 +35,7 @@
         {
           'cflags+': ['-fPIC'],
           'cflags_cc+': ['-stdlib=libc++'],
-          'ldflags': ['-nodefaultlibs', '-lc++', '-lc++abi', '-lm', '-lc', '-lgcc_s', '-lgcc', '-rdynamic'],
+          'ldflags': ['-nodefaultlibs', '-lc++', '-lc++abi', '-lm', '-ld', '-lc', '-lcrt', '-lgcc_s', '-lgcc', '-rdynamic'],
         }
       ],
     ],

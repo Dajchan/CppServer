@@ -3,6 +3,11 @@
     {
       'target_name': 'cpp_server',
       'type': 'executable',
+      'link_settings': {
+        'ldflags+': [
+          '-lpthread',
+        ],
+      },
       'libraries': [
         '<!@(echo "$(pwd)/deps/libs/microhttpd/lib/libmicrohttpd.a")',
       ],
