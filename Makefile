@@ -1,4 +1,5 @@
 DEV_VERSION := $(shell cat VERSION)
+MICROHTTPD_VERSION := 0.9.48
 
 JOBS := 12
 
@@ -17,6 +18,9 @@ endif
 
 mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
 current_dir := $(dir $(mkfile_path))
+
+MICROHTTPD_SOURCE_HOME := deps/microhttpd/libmicrohttpd-$(MICROHTTPD_VERSION)
+
 
 EMPTY :=
 SPACE := $(EMPTY) $(EMPTY)
@@ -57,44 +61,8 @@ clean_setup: clean_microhttpd
 	-rm -f variables.gypi
 	
 clean_microhttpd:
-	-rm -f deps/libmicrohttpd-0.9.39/config.log
-	-rm -f deps/libmicrohttpd-0.9.39/MHD_config.h
-	-rm -f deps/libmicrohttpd-0.9.39/Makefile
-	-rm -f deps/libmicrohttpd-0.9.39/config.status
-	-rm -f deps/libmicrohttpd-0.9.39/contrib/Makefile
-	-rm -f deps/libmicrohttpd-0.9.39/doc/Makefile
-	-rm -f deps/libmicrohttpd-0.9.39/doc/doxygen/Makefile
-	-rm -rf deps/libmicrohttpd-0.9.39/doc/examples/.deps/
-	-rm -f deps/libmicrohttpd-0.9.39/doc/examples/Makefile
-	-rm -f deps/libmicrohttpd-0.9.39/libmicrohttpd.pc
-	-rm -f deps/libmicrohttpd-0.9.39/libmicrospdy.pc
-	-rm -f deps/libmicrohttpd-0.9.39/libtool
-	-rm -f deps/libmicrohttpd-0.9.39/m4/Makefile
-	-rm -f deps/libmicrohttpd-0.9.39/src/Makefile
-	-rm -rf deps/libmicrohttpd-0.9.39/src/examples/.deps/
-	-rm -f deps/libmicrohttpd-0.9.39/src/examples/Makefile
-	-rm -f deps/libmicrohttpd-0.9.39/src/include/Makefile
-	-rm -rf deps/libmicrohttpd-0.9.39/src/microhttpd/.deps/
-	-rm -rf deps/libmicrohttpd-0.9.39/src/microhttpd/.libs/
-	-rm -f deps/libmicrohttpd-0.9.39/src/microhttpd/Makefile
-	-rm -f deps/libmicrohttpd-0.9.39/src/microhttpd/libmicrohttpd*
-	-rm -f deps/libmicrohttpd-0.9.39/src/microhttpd/microhttpd_dll_res.rc
-	-rm -rf deps/libmicrohttpd-0.9.39/src/microspdy/.deps/
-	-rm -f deps/libmicrohttpd-0.9.39/src/microspdy/Makefile
-	-rm -rf deps/libmicrohttpd-0.9.39/src/platform/.deps/
-	-rm -f deps/libmicrohttpd-0.9.39/src/platform/Makefile
-	-rm -rf deps/libmicrohttpd-0.9.39/src/spdy2http/.deps/
-	-rm -f deps/libmicrohttpd-0.9.39/src/spdy2http/Makefile
-	-rm -rf deps/libmicrohttpd-0.9.39/src/testcurl/.deps/
-	-rm -f deps/libmicrohttpd-0.9.39/src/testcurl/Makefile
-	-rm -rf deps/libmicrohttpd-0.9.39/src/testcurl/https/.deps/
-	-rm -f deps/libmicrohttpd-0.9.39/src/testcurl/https/Makefile
-	-rm -rf deps/libmicrohttpd-0.9.39/src/testspdy/.deps/
-	-rm -f deps/libmicrohttpd-0.9.39/src/testspdy/Makefile
-	-rm -rf deps/libmicrohttpd-0.9.39/src/testzzuf/.deps/
-	-rm -f deps/libmicrohttpd-0.9.39/src/testzzuf/Makefile
-	-rm -f deps/libmicrohttpd-0.9.39/stamp-h1
-	-rm -rf deps/libs/microhttpd/
+	-rm -f deps/microhttpd
+	-rm -rf deps/libs/microhttpd
 
 clean_dev_xcode:
 	-rm -rf	dev_xcode
@@ -133,17 +101,23 @@ build_test: deps/gyp px.gyp
 
 # ------------------- SETUP ------------------------------------
 
+deps/microhttpd: 
+	mkdir -p deps/microhttpd
+	curl -L http://mirror.netcologne.de/gnu/libmicrohttpd/libmicrohttpd-$(MICROHTTPD_VERSION).tar.gz >$(MICROHTTPD_SOURCE_HOME).tar.gz
+	tar -C deps/microhttpd -xzf $(MICROHTTPD_SOURCE_HOME).tar.gz
+
 deps/libs/microhttpd:
 ifeq ($(LOCAL_PLATFORM),linux)
 	export CPPFLAGS="-std=c++11 -stdlib=libc++ -Wno-deprecated-register -fvisibility=default -fPIC" 
 	export LDFLAGS="-nodefaultlibs -lc++ -lc++abi -lm -lc -lgcc_s -lgcc"
-	cd deps/libmicrohttpd-0.9.39; ./configure --prefix=${current_dir}deps/libs/microhttpd/ --exec-prefix=${current_dir}deps/libs/microhttpd/ --enable-shared=NO --disable-doc --disable-examples --disable-curl --disable-https; make; make install;
+	cd $(MICROHTTPD_SOURCE_HOME); autoreconf -ivf .; ./configure --prefix=${current_dir}deps/libs/microhttpd/ --exec-prefix=${current_dir}deps/libs/microhttpd/ --enable-shared=NO --disable-doc --disable-examples --disable-curl --disable-https; make; make install;
 else
 	export CPPFLAGS="-std=c++11 -stdlib=libc++ -Wno-deprecated-register -fvisibility=default -fPIC" 
-	cd deps/libmicrohttpd-0.9.39; ./configure --prefix=${current_dir}deps/libs/microhttpd/ --exec-prefix=${current_dir}deps/libs/microhttpd/ --enable-shared=NO --disable-doc --disable-examples --disable-curl --disable-https; make; make install;
+	cd $(MICROHTTPD_SOURCE_HOME); ./configure --prefix=${current_dir}deps/libs/microhttpd/ --exec-prefix=${current_dir}deps/libs/microhttpd/ --enable-shared=NO --disable-doc --disable-examples --disable-curl --disable-https; make; make install;
 endif
 
-setup_server: _variables deps/libs/microhttpd
+setup_server: _variables deps/microhttpd deps/libs/microhttpd
+	mkdir -p test
 
 setup_all: setup_server
 
