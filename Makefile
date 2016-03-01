@@ -135,6 +135,9 @@ compile_server: build_server
 server: compile_server
 
 all: server
+	
+install: server
+	cp ./build/server/out/Release/cpp_server /usr/bin/px-cpp-server
 
 # --------------------- Other Stuff ---------------------------
 
