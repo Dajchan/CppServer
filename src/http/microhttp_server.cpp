@@ -266,7 +266,7 @@ static int pre_authorize_request(const char* full_request_path, const char* meth
         }
         
         if (0 != strcmp(routing_entry->method, method) ) {
-            status_code = MHD_HTTP_METHOD_NOT_ACCEPTABLE;
+            status_code = MHD_HTTP_NOT_ACCEPTABLE;
             return MHD_NO;
         } else {
             if ( 0 == strcmp (method, MHD_HTTP_METHOD_GET) ) {
@@ -347,7 +347,7 @@ static int create_response (void *cls, struct MHD_Connection *connection, const 
     }
     
     /* unsupported HTTP method */
-    return send_error_response(MHD_HTTP_METHOD_NOT_ACCEPTABLE, connection);
+    return send_error_response(MHD_HTTP_NOT_ACCEPTABLE, connection);
 }
 
 
