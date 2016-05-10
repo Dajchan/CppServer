@@ -5,7 +5,7 @@ using namespace px;
 
 Response_p ResourceController::call(HTTP_Method method, Hash_p params) {
     if (method == HTTP_MethodGet) {
-        auto resource_id = params->get(px::Param::ResourceID);
+        auto resource_id = params->get(px::Param::FileName);
         if (resource_id) {
             if (auto resource = Application::Instance().get_resource(resource_id->string_value())) {
                 return Response::New(resource, 200);

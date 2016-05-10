@@ -20,7 +20,7 @@ URL_p URL::Create(const string& relative_url, const string& host, const string& 
     string path = px::String::Empty();
     size_t index = relative_url.find('?');
     
-    LogDebug("%s", relative_url.c_str());
+//    LogDebug("%s", relative_url.c_str());
     
     if (index != string::npos) {
         if (index) {
@@ -34,7 +34,10 @@ URL_p URL::Create(const string& relative_url, const string& host, const string& 
 }
 
 URL::URL(const string& schema, const string& host, const string& path, const string& query) : m_schema(schema), m_host(host), m_path(path), m_query(query) {
+    m_file = px::base_name(path);
+    m_action = px::first_component(path);
     
+//    LogDebug("%s %s %s", m_path.c_str(), m_file.c_str(), m_action.c_str());
 }
 
 URL::~URL() {
@@ -81,6 +84,14 @@ const string& URL::query() const {
 
 const string& URL::path() const {
     return m_path;
+}
+
+const string& URL::action() const {
+    return m_action;
+}
+
+const string& URL::file() const {
+    return m_file;
 }
 
 string m_controller;
@@ -178,6 +189,7 @@ namespace px {
         const string ResourceID = "res";
         const string ActionName = "action";
         const string SearchQuery = "q";
+        const string FileName = "file";
         
         static vector<string> valid_params = {PageNR, BlogID, PhotoID, ResourceID, SearchQuery};
         const vector<string>& ValidParams() {

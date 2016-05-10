@@ -4,7 +4,6 @@
 using namespace px;
 
 Response_p ImageController::call(HTTP_Method method, Hash_p params) {
-    LogDebug("ImageController::call");
     if (method == HTTP_MethodGet) {
         auto blog_id = params->get(px::Param::BlogID);
         auto photo_id = params->get(px::Param::PhotoID);

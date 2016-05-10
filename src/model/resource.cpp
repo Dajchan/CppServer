@@ -1,5 +1,6 @@
 #include "resource.hpp"
 #include "helper.hpp"
+#include "logger.hpp"
 
 using namespace px;
 
@@ -48,7 +49,8 @@ namespace px {
     };
     
     const string& mime_type_from_path(const string& path) {
-        string ext = file_extension(path);
+        string ext = px::downcase(file_extension(path));
+//        LogDebug("%s %s", path.c_str(), ext.c_str());
         auto itr = g_mimetype_map.find(ext);
         if (itr != g_mimetype_map.end()) {
             return itr->second;
@@ -93,13 +95,13 @@ const char * Resource::data(size_t* length) const {
 }
 
 const Date& Resource::last_modified() const {
-    return Date::Empty();
+    return m_last_modified;
 }
 
 char * Resource::load(size_t *length) const {
     FILE *fp;
     size_t lSize;
-    char *buffer;
+    char *buffer = nullptr;
     
     fp = fopen ( m_path.c_str() , "rb" );
     if( !fp ) {
@@ -108,21 +110,24 @@ char * Resource::load(size_t *length) const {
     
     fseek( fp , 0L , SEEK_END);
     lSize = ftell( fp );
-    rewind( fp );
     
-    /* allocate memory for entire content */
-    buffer = (char *)malloc(lSize+1 );
-    if( !buffer ) {
-        fclose(fp),fputs("memory alloc fails",stderr),exit(1);
-    }
-    
-    /* copy the file into the buffer */
-    if( 1!=fread( buffer , lSize, 1 , fp) ) {
-        fclose(fp),free(buffer),fputs("entire read fails",stderr),exit(1);
+    if (lSize) {
+        rewind( fp );
+        
+        /* allocate memory for entire content */
+        buffer = (char *)malloc(lSize);
+        if( !buffer ) {
+            fclose(fp),fputs("memory alloc fails",stderr),exit(1);
+        }
+        
+        /* copy the file into the buffer */
+        if( 1!=fread( buffer , lSize, 1 , fp) ) {
+            fclose(fp),free(buffer),fputs("entire read fails",stderr),exit(1);
+        }
     }
     
     fclose(fp);
-    *length = lSize+1;
+    *length = lSize;
     return buffer;
 }
 

@@ -28,7 +28,7 @@ namespace px {
      File Helper
      
      *************************/
-    
+    string first_component(const string& path);
     string base_name(const string& path);
     string file_stem(const string& path);
     string file_extension(const string& path);

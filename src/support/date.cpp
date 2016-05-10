@@ -8,6 +8,7 @@
 
 #include "date.hpp"
 #include "helper.hpp"
+#include <iomanip>
 
 bool GetDayAndMonthFromWeekInYear(int *year, int weekInYear, int *month, int *dayInMonth);
 int GetDayOfTheWeek(int year, int month, int day);
@@ -18,6 +19,11 @@ int GetDaysInYear(int year);
 bool IsALeapYear(int year);
 
 using namespace px;
+
+Date::Date(const char *str) {
+    
+}
+
 
 Date::Date(long uts): m_uts(uts) {}
 Date::Date() : m_uts(static_cast<long>(px::timestamp())) {}
@@ -35,6 +41,13 @@ Date::Date(int year, int month, int day, int hour, int min, int sec) {
         ts = px::timegm(tm);
     }
     m_uts = static_cast<long>(ts);
+}
+
+Date Date::FromString(const string& str) {
+    std::tm t = {};
+    std::istringstream ss(str);
+    ss >> std::get_time(&t, "%a, %d %b %Y %H:%M:%S %T");
+    return Date(t.tm_year+1900, t.tm_mon+1, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec);
 }
 
 Date Date::FromWeek(int year, int week, int day, int hour, int min, int sec) {
@@ -171,7 +184,7 @@ string Date::to_string() const {
     std::time_t t = m_uts;
     char mbstr[100];
     tm _t;
-    if (std::strftime(mbstr, sizeof(mbstr), "%Y-%m-%d %H:%M:%S UTC", gmtime_r(&t, &_t))) {
+    if (std::strftime(mbstr, sizeof(mbstr), "%a, %d %b %Y %H:%M:%S GMT", gmtime_r(&t, &_t))) {
         return mbstr;
     }
     return px::String::Empty();

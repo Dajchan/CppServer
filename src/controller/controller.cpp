@@ -16,8 +16,12 @@ Response_p HTMLController::call(HTTP_Method method, Hash_p params) {
     cache_key(params, key);
 
     if (!key.empty()) {
+//        LogDebug("cache key: %s", key.c_str());
+        
         auto itr = m_page_cache.find(key);
         if (itr != m_page_cache.end()) {
+//            LogDebug("%s", itr->second->last_modified().to_string().c_str());
+//            LogDebug("cache hit: %s %s", key.c_str(), itr->second->last_modified().to_string().c_str());
             return itr->second;
         }
     }
@@ -46,12 +50,15 @@ Response_p HTMLController::call(HTTP_Method method, Hash_p params) {
     if (m_html_parts) {
         ss << m_html_parts->first;
         auto status = body(ss, params);
-        ss << m_html_parts->second;
+        if (status == 404) {
+            return nullptr;
+        }
         
-//        LogDebug("%s", ss.str().c_str());
+        ss << m_html_parts->second;
         
         auto response = Response::New(ss.str(), status, "text/html");
         if (!key.empty() && response) {
+            response->set_last_modified(Date());
             m_page_cache[key] = response;
         }
         return response;

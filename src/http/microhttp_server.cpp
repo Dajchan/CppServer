@@ -97,21 +97,28 @@ struct Request {
 };
 
 static int send_error_response(unsigned int code, struct MHD_Connection *connection) {
-    struct MHD_Response *response = MHD_create_response_from_buffer (1, (void *)" ", MHD_RESPMEM_PERSISTENT);
+    struct MHD_Response *response = MHD_create_response_from_buffer (0, NULL, MHD_RESPMEM_PERSISTENT);
     int ret = MHD_queue_response(connection, code, response);
     MHD_destroy_response (response);
     return ret;
 }
 
 static int not_found_action(struct Request*, const char *mime, px::Hash_p post_data, struct MHD_Connection *connection) {
-    struct MHD_Response *response = MHD_create_response_from_buffer (1, (void *)" ", MHD_RESPMEM_PERSISTENT);
+    struct MHD_Response *response = MHD_create_response_from_buffer (0, NULL, MHD_RESPMEM_PERSISTENT);
     int ret = MHD_queue_response(connection, MHD_HTTP_NOT_FOUND, response);
     MHD_destroy_response (response);
     return ret;
 }
 
-static int send_response(void* buffer, size_t size, const char* mime, unsigned int status_code, struct MHD_Connection *connection) {
-    LogDebug("sending response data: %d %s %d", (int)size, mime, status_code);
+static int send_not_modified(struct MHD_Connection *connection) {
+    struct MHD_Response *response = MHD_create_response_from_buffer (0, NULL, MHD_RESPMEM_PERSISTENT);
+    int ret = MHD_queue_response(connection, MHD_HTTP_NOT_MODIFIED, response);
+    MHD_destroy_response (response);
+    return ret;
+}
+
+static int send_response(void* buffer, size_t size, const char* mime, unsigned int status_code, struct MHD_Connection *connection, const px::Hash_p additional_headers = nullptr) {
+//    LogDebug("sending response data: %d %s %d", (int)size, mime, status_code);
     int ret;
     struct MHD_Response *response;
     response = MHD_create_response_from_buffer (size, buffer, MHD_RESPMEM_MUST_COPY);
@@ -120,7 +127,14 @@ static int send_response(void* buffer, size_t size, const char* mime, unsigned i
     }
     ret = MHD_queue_response(connection, status_code, response);
     
-    MHD_add_response_header(response, MHD_HTTP_HEADER_CONTENT_ENCODING, mime);
+    MHD_add_response_header(response, MHD_HTTP_HEADER_CONTENT_TYPE, mime);
+    
+    if (additional_headers) {
+        additional_headers->each_pair([&](const string &k, const px::Value_p &v) {
+//            LogDebug("%s %s", k.c_str(), v->string_value().c_str());
+            MHD_add_response_header(response, k.c_str(), v->string_value().c_str());
+        });
+    }
     
     MHD_destroy_response(response);
     return ret;
@@ -128,26 +142,58 @@ static int send_response(void* buffer, size_t size, const char* mime, unsigned i
 
 static int send_response(px::Response_p response, struct MHD_Connection *connection) {
     if (!response) {
-        return send_error_response(404, connection);
+        return send_error_response(MHD_HTTP_NOT_FOUND, connection);
+    } else if(response->status_code() == MHD_HTTP_NOT_MODIFIED) {
+        return send_not_modified(connection);
     }
+    
+    px::Hash_p headers = nullptr;
+    
+    {
+        px::Date last_modified = response->last_modified();
+        
+//        LogDebug("%s", last_modified.to_string().c_str());
+        
+        if (last_modified != px::Date::Empty()) {
+
+            const char* value = MHD_lookup_connection_value(connection, MHD_HEADER_KIND, MHD_HTTP_HEADER_IF_MODIFIED_SINCE);
+            
+            if (value) {
+                auto d = px::Date::FromString(value);
+//                LogDebug("%s %s", MHD_HTTP_HEADER_IF_MODIFIED_SINCE, d.to_string().c_str());
+                
+                if (d == last_modified) {
+                    return send_not_modified(connection);
+                }
+            }
+            
+            if (!headers) {
+                headers = px::Hash::Create();
+            }
+            
+            headers->set(MHD_HTTP_HEADER_LAST_MODIFIED, px::Value::Create(last_modified.to_string()));
+            headers->set(MHD_HTTP_HEADER_CACHE_CONTROL, px::Value::Create("max-age=0, must-revalidate"));
+        }
+    }
+    
     if (auto resource = response->resource()) {
-        LogDebug("sending response with resource");
+//        LogDebug("sending response with resource");
         // TODO: data could be improved!!!!!!!!!!!
         size_t data_length;
         auto data = resource->data(&data_length);
         if (data) {
-            return send_response((void *)data, data_length, response->mime_type().c_str(), response->status_code(), connection);
+            return send_response((void *)data, data_length, response->mime_type().c_str(), response->status_code(), connection, headers);
             
         } else {
             char * data = resource->load(&data_length);
-            int ret = send_response((void *)data, data_length, response->mime_type().c_str(), response->status_code(), connection);
+            int ret = send_response((void *)data, data_length, response->mime_type().c_str(), response->status_code(), connection, headers);
             free(data);
             return ret;
         }
     } else {
-        LogDebug("sending response with data");
+//        LogDebug("sending response with data");
         auto data = response->data();
-        return send_response((void *)data.data(), data.length(), response->mime_type().c_str(), response->status_code(), connection);
+        return send_response((void *)data.data(), data.length(), response->mime_type().c_str(), response->status_code(), connection, headers);
     }
 }
 
@@ -172,60 +218,13 @@ static int response_handler(struct Request* request, const char *mime, px::Hash_
  
  *************************/
 
-px::Hash_p parse_post_data(const char *post_data, size_t post_data_len) {
-    string s(post_data, post_data_len);
-    string out;
-//    px::Application::Instance().decode_shared(s, out);
-//    return px::JSONSerializer::DeSerialize(out, nullptr)->hash_value();
-    return nullptr;
-}
-
-
-
-//// TODO: add proper error-logs and handling
-//// TODO: add authentication, provide user_session to server calls etc.!!
-//static int list_modifications(struct Request* request, const char *mime, px::Hash_p post_data, struct MHD_Connection *connection) {
-//    if (post_data) {
-//        auto info = px::ApplicationServer::Server().insert_list_modifications(post_data->get(Px::Request::Param::ListID)->string_value(), post_data->get(Px::Request::Param::Modifications)->array_value(), nullptr);
-//        send_data_response(request, _V(info), MHD_HTTP_OK, connection);
-//    }
-//    return send_error_response(420, connection);
+//px::Hash_p parse_post_data(const char *post_data, size_t post_data_len) {
+//    string s(post_data, post_data_len);
+//    string out;
+////    px::Application::Instance().decode_shared(s, out);
+////    return px::JSONSerializer::DeSerialize(out, nullptr)->hash_value();
+//    return nullptr;
 //}
-//
-//static int user_modifications(struct Request* request, const char *mime, px::Hash_p post_data, struct MHD_Connection *connection) {
-//    if (post_data) {
-//        auto info = px::ApplicationServer::Server().insert_info_modifications(post_data->get(Px::Request::Param::ListID)->string_value(), post_data->get(Px::Request::Param::Modifications)->array_value(), nullptr);
-//        send_data_response(request, _V(info), MHD_HTTP_OK, connection);
-//    }
-//    return send_error_response(420, connection);
-//}
-
-static int signin(struct Request* request, const char *mime, px::Hash_p post_data, struct MHD_Connection *connection) {
-    if (post_data) {
-        
-//        auto session = px::ApplicationServer::Server().create_session(post_data->get(Px::Request::Param::Email)->string_value(),
-//                                                                      post_data->get(Px::Request::Param::Password)->string_value(),
-//                                                                      post_data->get(Px::Request::Param::PublicKey)->string_value());
-//        if (session) {
-//            request->session = session;
-//            send_data_response(request, _V(session), MHD_HTTP_OK, connection);
-//        }
-    }
-    return not_found_action(request, mime, post_data, connection);
-}
-
-static int signup(struct Request* request, const char *mime, px::Hash_p post_data, struct MHD_Connection *connection) {
-    if (post_data) {
-//        auto session = px::ApplicationServer::Server().signup(post_data->get(Px::Request::Param::Email)->string_value(),
-//                                                              post_data->get(Px::Request::Param::Password)->string_value(),
-//                                                              post_data->get(Px::Request::Param::PublicKey)->string_value());
-//        if (session) {
-//            request->session = session;
-//            send_data_response(request, _V(session), MHD_HTTP_OK, connection);
-//        }
-    }
-    return send_error_response(420, connection);
-}
 
 /**************************
  
@@ -253,14 +252,14 @@ static int pre_authorize_request(const char* full_request_path, const char* meth
     px::URL_p url = px::URL::Create(full_request_path);
     if (url && !url->path().empty()) {
         request->url = url;
-        auto& action = url->path();
+        auto& action = url->action();
         
         size_t i=0;
         
         auto routing_entry = px::RoutingTable::Instance().get(action);
         
         if (!routing_entry) {
-            LogDebug("path not valid");
+            LogDebug("path not valid: %s", action.c_str());
             status_code = MHD_HTTP_NOT_FOUND;
             return MHD_NO;
         }
@@ -327,7 +326,7 @@ static int create_response (void *cls, struct MHD_Connection *connection, const 
     if (request->method != HTTP_MethodUnknown && request->routing_infos) {
         auto controller = request->routing_infos->controller;
         if (controller) {
-            px::Hash_p params = px::Hash::Create({{px::Param::ActionName , px::Value::Create(request->routing_infos->action)}});
+            px::Hash_p params = px::Hash::Create({{px::Param::ActionName , px::Value::Create(request->routing_infos->action)}, {px::Param::FileName , px::Value::Create(request->url->file())}});
             params->append(request->url->params());
             
             for (auto& p : px::Param::ValidParams()) {
@@ -337,9 +336,9 @@ static int create_response (void *cls, struct MHD_Connection *connection, const 
                 }
             }
             
-            if (request->pdp) {
-                params->append(parse_post_data(request->pdp->buf, request->pdp->cur_size));
-            }
+//            if (request->pdp) {
+//                params->append(parse_post_data(request->pdp->buf, request->pdp->cur_size));
+//            }
 
             auto response = controller->call(request->method, params);
             return send_response(response, connection);

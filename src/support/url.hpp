@@ -16,6 +16,8 @@ namespace px {
         
         const string& query() const;
         const string& path() const;
+        const string& action() const;
+        const string& file() const;
         
         void url_string(string& out, bool append=false) const;
         void relative_url_string(string& out, bool append=false) const;
@@ -34,6 +36,8 @@ namespace px {
         string m_schema;
         string m_host;
         string m_path;
+        string m_action;
+        string m_file;
         string m_query;
         bool m_dirty;
         unordered_map<string, string> *m_query_params = nullptr;
@@ -53,6 +57,7 @@ namespace px {
         extern const string ResourceID;
         extern const string ActionName;
         extern const string SearchQuery;
+        extern const string FileName;
         
         const vector<string>& ValidParams();
     }

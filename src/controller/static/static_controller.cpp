@@ -5,8 +5,9 @@
 using namespace px;
 
 unsigned int StaticController::body(std::ostringstream& stream, Hash_p params) {
-    if (auto page_id = params->get(px::Param::ActionName)) {
-        if (auto resource = Application::Instance().get_page(page_id->string_value())) {
+    if (auto page_name = params->get(px::Param::FileName)) {
+
+        if (auto resource = Application::Instance().get_page(page_name->string_value() + ".html")) {
             size_t size=0;
             auto buffer = resource->load(&size);
             stream.write(buffer, size);

@@ -151,6 +151,10 @@ string px::downcase(const string& s, unsigned int length) {
  
  *************************/
 
+string px::first_component(const string& path) {
+    return path.substr(0, path.find_first_of("/\\", 1));
+}
+
 string px::base_name(const string& path) {
     return path.substr(path.find_last_of("/\\") + 1);
 }
@@ -160,7 +164,11 @@ string px::file_stem(const string& path) {
 }
 
 string px::file_extension(const string& path) {
-    return path.substr(path.find_last_of("."));
+    auto index = path.find_last_of(".");
+    if (index != string::npos && index < path.length()) {
+        return path.substr(index+1);
+    }
+    return px::String::Empty();
 }
 
 bool px::file_exists(const char *path, bool* is_directory) {

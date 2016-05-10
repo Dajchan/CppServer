@@ -4,6 +4,7 @@
 namespace px {
     class Date {
     public:
+        Date(const char *str);
         Date(long uts);
         Date();
         Date(int year, int month, int day, int hour=0, int min=0, int sec=0);
@@ -22,6 +23,7 @@ namespace px {
         Date beginning_of_month() const;
         Date end_of_month() const;
         
+        static Date FromString(const string& str);
         static Date FromWeek(int year, int week, int day=0, int hour=0, int min=0, int sec=0);
         
         static const Date& Empty();
