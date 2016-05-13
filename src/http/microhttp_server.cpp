@@ -298,6 +298,7 @@ static int create_response (void *cls, struct MHD_Connection *connection, const 
         unsigned int status_code = 0;
         
         if (!pre_authorize_request(url, method, request, status_code)) {
+            LogDebug("pre_authorize_request failed");
             return send_error_response(status_code, connection);
         }
 
@@ -341,6 +342,7 @@ static int create_response (void *cls, struct MHD_Connection *connection, const 
 //            }
 
             auto response = controller->call(request->method, params);
+            
             return send_response(response, connection);
         }
     }

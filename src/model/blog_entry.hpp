@@ -12,19 +12,21 @@ namespace px {
         
         ~BlogEntry();
         
-        void append(Photo_p photo);
+        void append(Resource_p resource);
         
         Photo_p get(const string& identifier) const;
         
+        const vector<Resource_p>& resources() const;
         const vector<Photo_p>& photos() const;
         const string& title() const;
         const string& identifier() const;
-        
-        
+
         
     private:
         string m_title;
         string m_identifier;
+        
+        vector<Resource_p> m_resources;
         vector<Photo_p> m_photos;
         unordered_map<string, Photo_p> m_photos_map;
         

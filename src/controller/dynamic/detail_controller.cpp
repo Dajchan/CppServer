@@ -1,5 +1,6 @@
 #include "detail_controller.hpp"
 #include "application.hpp"
+#include "mime_type.hpp"
 
 using namespace px;
 
@@ -7,25 +8,41 @@ unsigned int DetailController::body(std::ostringstream& stream, Hash_p params) {
     auto blog_id = params->get(px::Param::BlogID);
     if (blog_id) {
         if (auto blog = Application::Instance().get(blog_id->string_value())) {
-            
-            stream << "<p>" << std::endl;
-            
-            auto& photos = blog->photos();
-            
-            for (auto& photo : photos) {
+
+            bool image = false;
+            auto& resources = blog->resources();
+            for (auto& resource : resources) {
                 
-                stream << "<img src=\"/image?" << px::Param::BlogID << "=" << blog_id->string_value() << "&" << px::Param::PhotoID << "=" << photo->identifier() << "\" />";
-                if (photo != photos.back()) {
-                    stream << "</br>";
+                
+                if (auto photo = std::dynamic_pointer_cast<Photo>(resource)) {
+                    
+                    if (!image) {
+                        stream << "<p>" << std::endl;
+                    } else {
+                        stream << "<br/>" << std::endl;
+                    }
+                    stream << "<img src=\"/image?" << px::Param::BlogID << "=" << blog_id->string_value() << "&" << px::Param::PhotoID << "=" << photo->identifier() << "\" />" << std::endl;
+                    image = true;
+                } else {
+                    if (image) {
+                        stream << "</p>" << std::endl;
+                    }
+                    
+                    stream << "<p>" << std::endl;
+                    size_t size=0;
+                    auto buffer = resource->load(&size);
+                    stream.write(buffer, size);
+                    free(buffer);
+                    stream << "</p>" << std::endl;
+                    image = false;
                 }
-                stream << std::endl;
             }
-            stream << "</p>" << std::endl;
+            if (image) {
+                stream << "</p>" << std::endl;
+            }
             
             return 200;
         }
-        
-        // TODO: add next and prev
     }
     return 404;
 }

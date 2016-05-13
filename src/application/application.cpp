@@ -4,6 +4,7 @@
 #include "base64.hpp"
 #include "timer.hpp"
 #include "controller.hpp"
+#include "mime_type.hpp"
 
 using namespace px;
 
@@ -129,16 +130,22 @@ void Application::_load_content() {
     for (auto& blog_name : blog_dirs) {
         // optional: Get info File
         auto current_dir = blog_dir_name + "/" + blog_name;
-        auto photo_files = px::dir_content(current_dir, FileTypeFile);
-        
-        if (!photo_files.empty()) {
+        auto blog_content_files = px::dir_content(current_dir, FileTypeFile);
+
+        if (!blog_content_files.empty()) {
+            
             BlogEntry_p entry = BlogEntry::New(blog_name, px::strip(base64_encode(blog_name), "="));
             m_blog_entries_map[entry->identifier()] = entry;
             m_blog_entries.push_back(entry);
             
-            for (auto& photo_name : photo_files) {
-                Photo_p photo = Photo::New(photo_name, px::strip(base64_encode(photo_name), "="), current_dir + "/" + photo_name);
-                entry->append(photo);
+            for (auto& file_name : blog_content_files) {
+                if (is_image_file(file_name)) {
+                    Photo_p photo = Photo::New(file_name, px::strip(base64_encode(file_name), "="), current_dir + "/" + file_name);
+                    entry->append(photo);
+                } else if (is_txt_file(file_name) || is_html_file(file_name)) {
+                    Resource_p resource = Resource::New(file_name, current_dir + "/" + file_name, true);
+                    entry->append(resource);
+                }
             }
         }
     }

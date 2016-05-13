@@ -8,6 +8,7 @@
 
 #include "blog_entry.hpp"
 #include "logger.hpp"
+#include "mime_type.hpp"
 
 using namespace px;
 
@@ -20,10 +21,13 @@ BlogEntry::BlogEntry(const string& title, const string& identifier) : m_title(ti
 
 BlogEntry::~BlogEntry() {}
 
-void BlogEntry::append(Photo_p photo) {
-    if (photo) {
-        m_photos.push_back(photo);
-        m_photos_map[photo->identifier()] = photo;
+void BlogEntry::append(Resource_p resource) {
+    if (resource) {
+        if (auto photo = std::dynamic_pointer_cast<Photo>(resource)) {
+            m_photos.push_back(photo);
+            m_photos_map[photo->identifier()] = photo;
+        }
+        m_resources.push_back(resource);
     }
 }
 
@@ -33,6 +37,10 @@ Photo_p BlogEntry::get(const string& identifier) const {
         return itr->second;
     }
     return nullptr;
+}
+
+const vector<Resource_p>& BlogEntry::resources() const {
+    return m_resources;
 }
 
 const vector<Photo_p>& BlogEntry::photos() const {

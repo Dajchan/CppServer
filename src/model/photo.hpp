@@ -8,15 +8,17 @@ namespace px {
     
     class Photo : public Resource {
     public:
-        static Photo_p New(const string& title, const string& identifier, const string& path);
+        static Photo_p New(const string& title, const string& identifier, const string& path, const string& caption = px::String::Empty());
         virtual ~Photo();
         
         const string& title() const;
+        const string& caption() const;
         
     private:
         string m_title;
+        string m_caption;
         
-        Photo(const string& title, const string& identifier, const string& path);
+        Photo(const string& title, const string& identifier, const string& path, const string& caption);
         Photo(const Photo& src) = delete;
         Photo& operator=(const Photo& rhs) = delete;
     };

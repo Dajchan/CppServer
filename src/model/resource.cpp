@@ -1,63 +1,9 @@
 #include "resource.hpp"
 #include "helper.hpp"
 #include "logger.hpp"
+#include "mime_type.hpp"
 
 using namespace px;
-
-namespace px {
-    
-    // TODO: MimeType for icon, svg and other resources missing
-    
-    namespace MimeType {
-        namespace Image {
-            static const string JPG = "image/jpg";
-            static const string PNG = "image/png";
-            static const string SVG = "image/svg+xml";
-        }
-        namespace Text {
-            static const string HTML = "text/html";
-            static const string PLAIN = "text/plain";
-            static const string CSS = "text/css";
-        }
-    }
-    
-    namespace Extension {
-        namespace Image {
-            static const string JPG = "jpg";
-            static const string JPEG = "jpeg";
-            static const string PNG = "png";
-            static const string SVG = "svg";
-        }
-        namespace Text {
-            static const string TXT = "txt";
-            static const string HTML = "html";
-            static const string CSS = "css";
-        }
-    }
-    
-    static const std::set<string> g_image_extensions = {Extension::Image::JPG, Extension::Image::JPEG, Extension::Image::PNG};
-
-    static const unordered_map<string, string> g_mimetype_map = {
-        {Extension::Image::JPG , MimeType::Image::JPG},
-        {Extension::Image::JPEG , MimeType::Image::JPG},
-        {Extension::Image::PNG , MimeType::Image::PNG},
-        {Extension::Image::SVG , MimeType::Image::SVG},
-        
-        {Extension::Text::TXT , MimeType::Text::PLAIN},
-        {Extension::Text::HTML , MimeType::Text::HTML},
-        {Extension::Text::CSS , MimeType::Text::CSS},
-    };
-    
-    const string& mime_type_from_path(const string& path) {
-        string ext = px::downcase(file_extension(path));
-//        LogDebug("%s %s", path.c_str(), ext.c_str());
-        auto itr = g_mimetype_map.find(ext);
-        if (itr != g_mimetype_map.end()) {
-            return itr->second;
-        }
-        return MimeType::Text::PLAIN;
-    }
-}
 
 Resource_p Resource::New(const string& identifier, const string& path, bool cache) {
     return Resource_p(new Resource(identifier, path, cache));
@@ -68,7 +14,7 @@ Resource::Resource(const string& identifier, const string& path, bool cache) : m
         m_data = load(&m_data_length);
     }
     m_mime_type = mime_type_from_path(path);
-    m_last_modified = Date(px::file_modification_time(path));
+    m_last_modified = Date(file_modification_time(path));
 }
 
 Resource::~Resource() {
