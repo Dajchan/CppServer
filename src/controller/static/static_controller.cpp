@@ -9,9 +9,8 @@ unsigned int StaticController::body(std::ostringstream& stream, Hash_p params) {
 
         if (auto resource = Application::Instance().get_page(page_name->string_value() + ".html")) {
             size_t size=0;
-            auto buffer = resource->load(&size);
+            auto buffer = resource->data(&size);
             stream.write(buffer, size);
-            free(buffer);
             return 200;
         }
     }

@@ -121,34 +121,23 @@ void Application::_check_file_changes() {
     }
 }
 
+/*
+ 
+ Content:
+ 
+ /blogs/{[BLOG_NAME]}/{description.txt, [CONTENT]}
+ 
+ /assets
+ 
+ /static
+ 
+ */
+
 void Application::_load_content() {
-    string blog_dir_name = _blog_dir();
     string asset_dir_name = _asset_dir();
     string static_dir_name = _static_dir();
     
-    auto blog_dirs = px::dir_content(blog_dir_name, FileTypeDir);
-    for (auto& blog_name : blog_dirs) {
-        // optional: Get info File
-        auto current_dir = blog_dir_name + "/" + blog_name;
-        auto blog_content_files = px::dir_content(current_dir, FileTypeFile);
-
-        if (!blog_content_files.empty()) {
-            
-            BlogEntry_p entry = BlogEntry::New(blog_name, px::strip(base64_encode(blog_name), "="));
-            m_blog_entries_map[entry->identifier()] = entry;
-            m_blog_entries.push_back(entry);
-            
-            for (auto& file_name : blog_content_files) {
-                if (is_image_file(file_name)) {
-                    Photo_p photo = Photo::New(file_name, px::strip(base64_encode(file_name), "="), current_dir + "/" + file_name);
-                    entry->append(photo);
-                } else if (is_txt_file(file_name) || is_html_file(file_name)) {
-                    Resource_p resource = Resource::New(file_name, current_dir + "/" + file_name, true);
-                    entry->append(resource);
-                }
-            }
-        }
-    }
+    _load_blogs(_blog_dir());
     
     auto asset_files = px::dir_content(asset_dir_name, FileTypeFile);
     for (auto& asset_name : asset_files) {
@@ -160,6 +149,45 @@ void Application::_load_content() {
     for (auto& page_name : static_pages) {
         Resource_p resource = Resource::New(page_name, static_dir_name + "/" + page_name, true);
         m_static_pages[resource->identifier()] = resource;
+    }
+}
+
+void Application::_load_blogs(const string& blog_dir_name) {
+    auto blog_dirs = px::dir_content(blog_dir_name, FileTypeDir);
+    for (auto& blog_name : blog_dirs) {
+        auto current_dir = blog_dir_name + "/" + blog_name;
+        
+        Resource_p blog_description = nullptr;
+        
+        auto blog_description_path = current_dir + "/" + "description.txt";
+        bool is_dir = false;
+        if (px::file_exists(blog_description_path.c_str(), &is_dir) && !is_dir) {
+            blog_description = Resource::New("description", blog_description_path);
+        }
+        
+        auto blog_content_folder_path = current_dir + "/" + "content";
+        if (px::file_exists(blog_content_folder_path.c_str(), &is_dir) && is_dir) {
+            auto blog_content_files = px::dir_content(blog_content_folder_path, FileTypeFile);
+            
+            if (!blog_content_files.empty()) {
+                
+                // TODO:
+                
+                BlogEntry_p entry = BlogEntry::New(blog_name, px::strip(base64_encode(blog_name), "="), blog_description);
+                m_blog_entries_map[entry->identifier()] = entry;
+                m_blog_entries.push_back(entry);
+                
+                for (auto& file_name : blog_content_files) {
+                    if (is_image_file(file_name)) {
+                        Photo_p photo = Photo::New(file_name, px::strip(base64_encode(file_name), "="), blog_content_folder_path + "/" + file_name);
+                        entry->append(photo);
+                    } else if (is_txt_file(file_name) || is_html_file(file_name)) {
+                        Resource_p resource = Resource::New(file_name, blog_content_folder_path + "/" + file_name, true);
+                        entry->append(resource);
+                    }
+                }
+            }
+        }
     }
 }
 

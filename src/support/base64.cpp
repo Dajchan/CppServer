@@ -112,7 +112,9 @@ namespace px {
     string base64_encode(const string& data) {
         size_t length;
         auto out = base64_encode((const unsigned char *)data.data(), data.size(), &length);
-        return string(out, length);
+        auto ret = string(out, length);
+        free(out);
+        return ret;
     }
 }
 

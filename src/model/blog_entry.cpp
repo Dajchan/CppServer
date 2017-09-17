@@ -12,12 +12,12 @@
 
 using namespace px;
 
-BlogEntry_p BlogEntry::New(const string& title, const string& identifier) {
+BlogEntry_p BlogEntry::New(const string& title, const string& identifier, Resource_p description) {
     LogDebug("BlogEntry: %s %s", title.c_str(), identifier.c_str());
-    return BlogEntry_p(new BlogEntry(title, identifier));
+    return BlogEntry_p(new BlogEntry(title, identifier, description));
 }
 
-BlogEntry::BlogEntry(const string& title, const string& identifier) : m_title(title), m_identifier(identifier) {}
+BlogEntry::BlogEntry(const string& title, const string& identifier, Resource_p description) : m_title(title), m_identifier(identifier), m_description(description) {}
 
 BlogEntry::~BlogEntry() {}
 
@@ -53,4 +53,8 @@ const string& BlogEntry::title() const {
 
 const string& BlogEntry::identifier() const {
     return m_identifier;
+}
+
+const Resource_p BlogEntry::description() const {
+    return m_description;
 }

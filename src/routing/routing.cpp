@@ -14,6 +14,7 @@ namespace px {
     namespace RoutingEntry {
         static const routing_entry Home = { "/home", "text/html", "GET", HomeController::New() };
         static const routing_entry Impressum = { "/impressum", "text/html", "GET", StaticController::New() };
+        static const routing_entry About = { "/about", "text/html", "GET", Impressum.controller };
         static const routing_entry Contact = { "/contact", "text/html", "GET", Impressum.controller };
         static const routing_entry List = { "/blog", "text/html", "GET", ListController::New() };
         static const routing_entry Show = { "/show", "text/html", "GET", DetailController::New() };
@@ -39,6 +40,7 @@ RoutingTable::RoutingTable() {
     for (auto e : {
         &RoutingEntry::Home,
         &RoutingEntry::Impressum,
+        &RoutingEntry::About,
         &RoutingEntry::Contact,
         &RoutingEntry::List,
         &RoutingEntry::Show,

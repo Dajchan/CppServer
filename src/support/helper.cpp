@@ -290,27 +290,27 @@ void px::xmlescape(const string &s, string& out) {
                 case 62: // >
                     ADD_ESCAPE_SEQUENCE(buffer, __gt);
                     break;
-                case 196: // Ä
-                    ADD_ESCAPE_SEQUENCE(buffer, __Auml);
-                    break;
-                case 214: // Ö
-                    ADD_ESCAPE_SEQUENCE(buffer, __Ouml);
-                    break;
-                case 220: // Ü
-                    ADD_ESCAPE_SEQUENCE(buffer, __Uuml);
-                    break;
-                case 223: // ß
-                    ADD_ESCAPE_SEQUENCE(buffer, __sz);
-                    break;
-                case 228: // ä
-                    ADD_ESCAPE_SEQUENCE(buffer, __auml);
-                    break;
-                case 246: // ö
-                    ADD_ESCAPE_SEQUENCE(buffer, __ouml);
-                    break;
-                case 252: // ü
-                    ADD_ESCAPE_SEQUENCE(buffer, __uuml);
-                    break;
+//                case 196: // Ä
+//                    ADD_ESCAPE_SEQUENCE(buffer, __Auml);
+//                    break;
+//                case 214: // Ö
+//                    ADD_ESCAPE_SEQUENCE(buffer, __Ouml);
+//                    break;
+//                case 220: // Ü
+//                    ADD_ESCAPE_SEQUENCE(buffer, __Uuml);
+//                    break;
+//                case 223: // ß
+//                    ADD_ESCAPE_SEQUENCE(buffer, __sz);
+//                    break;
+//                case 228: // ä
+//                    ADD_ESCAPE_SEQUENCE(buffer, __auml);
+//                    break;
+//                case 246: // ö
+//                    ADD_ESCAPE_SEQUENCE(buffer, __ouml);
+//                    break;
+//                case 252: // ü
+//                    ADD_ESCAPE_SEQUENCE(buffer, __uuml);
+//                    break;
                 default:
                     buffer[b++] = c;
                     break;
@@ -346,20 +346,20 @@ void px::xmlunescape(const string &s, string& out) {
                 retBuffer[b++] = '<';
             }else if(COMP_ESCAPE_SEQUENCE(seqBuffer, __gt)) {
                 retBuffer[b++] = '>';
-            }else if(COMP_ESCAPE_SEQUENCE(seqBuffer, __Auml)) {
-                retBuffer[b++] = 196;
-            }else if(COMP_ESCAPE_SEQUENCE(seqBuffer, __Ouml)) {
-                retBuffer[b++] = 214;
-            }else if(COMP_ESCAPE_SEQUENCE(seqBuffer, __Uuml)) {
-                retBuffer[b++] = 220;
-            }else if(COMP_ESCAPE_SEQUENCE(seqBuffer, __sz)) {
-                retBuffer[b++] = 223;
-            }else if(COMP_ESCAPE_SEQUENCE(seqBuffer, __auml)) {
-                retBuffer[b++] = 228;
-            }else if(COMP_ESCAPE_SEQUENCE(seqBuffer, __ouml)) {
-                retBuffer[b++] = 246;
-            }else if(COMP_ESCAPE_SEQUENCE(seqBuffer, __uuml)) {
-                retBuffer[b++] = 252;
+//            }else if(COMP_ESCAPE_SEQUENCE(seqBuffer, __Auml)) {
+//                retBuffer[b++] = (unsigned char)196;
+//            }else if(COMP_ESCAPE_SEQUENCE(seqBuffer, __Ouml)) {
+//                retBuffer[b++] = (unsigned char)214;
+//            }else if(COMP_ESCAPE_SEQUENCE(seqBuffer, __Uuml)) {
+//                retBuffer[b++] = (unsigned char)220;
+//            }else if(COMP_ESCAPE_SEQUENCE(seqBuffer, __sz)) {
+//                retBuffer[b++] = (unsigned char)223;
+//            }else if(COMP_ESCAPE_SEQUENCE(seqBuffer, __auml)) {
+//                retBuffer[b++] = (unsigned char)228;
+//            }else if(COMP_ESCAPE_SEQUENCE(seqBuffer, __ouml)) {
+//                retBuffer[b++] = (unsigned char)246;
+//            }else if(COMP_ESCAPE_SEQUENCE(seqBuffer, __uuml)) {
+//                retBuffer[b++] = (unsigned char)252;
             } else if(seqBuffer[0] == '#') {
                 int errno_save = errno;
                 bool hex = seqBuffer[1] == 'x' || seqBuffer[1] == 'X';

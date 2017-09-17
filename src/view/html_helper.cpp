@@ -1,5 +1,6 @@
 #include "html_helper.hpp"
 #include "url.hpp"
+#include "helper.hpp"
 
 namespace px {
 
@@ -14,7 +15,15 @@ namespace px {
                 
                 stream << "<a href=\"/show?" << px::Param::BlogID << "=" << entry->identifier() << "\">" << std::endl;
                 stream << "<img src=\"/image?" << px::Param::BlogID << "=" << entry->identifier() << "&" << px::Param::PhotoID << "=" << photo->identifier() << "\" />" << std::endl;
-                stream << "<div class=\"list-item-overlay\"><div class=\"vertical-center-box\"><p>" << entry->title() << "</p></div></div>" << std::endl;
+                stream << "<div class=\"list-item-overlay\"><div class=\"vertical-center-box\"><p>" << entry->title();
+                if (entry->description()) {
+                    stream << "<br/>";
+                    size_t size=0;
+                    auto buffer = entry->description()->load(&size);
+                    stream << px::xmlescape(string(buffer, size));
+                    free(buffer);
+                }
+                stream << "</p></div></div>" << std::endl;
                 stream << "</a>" << std::endl;
                 
                 stream << "</article>" << std::endl;

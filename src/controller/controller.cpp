@@ -16,12 +16,8 @@ Response_p HTMLController::call(HTTP_Method method, Hash_p params) {
     cache_key(params, key);
 
     if (!key.empty()) {
-//        LogDebug("cache key: %s", key.c_str());
-        
         auto itr = m_page_cache.find(key);
         if (itr != m_page_cache.end()) {
-//            LogDebug("%s", itr->second->last_modified().to_string().c_str());
-//            LogDebug("cache hit: %s %s", key.c_str(), itr->second->last_modified().to_string().c_str());
             return itr->second;
         }
     }

@@ -61,7 +61,7 @@ clean_setup: clean_microhttpd
 	-rm -f variables.gypi
 	
 clean_microhttpd:
-	-rm -f deps/microhttpd
+	-rm -rf deps/microhttpd
 	-rm -rf deps/libs/microhttpd
 
 clean_dev_xcode:
@@ -113,8 +113,19 @@ ifeq ($(LOCAL_PLATFORM),linux)
 	cd $(MICROHTTPD_SOURCE_HOME); autoreconf -ivf .; ./configure --prefix=${current_dir}deps/libs/microhttpd/ --exec-prefix=${current_dir}deps/libs/microhttpd/ --enable-shared=NO --disable-doc --disable-examples --disable-curl --disable-https; make; make install;
 else
 	export CPPFLAGS="-std=c++11 -stdlib=libc++ -Wno-deprecated-register -fvisibility=default -fPIC" 
-	cd $(MICROHTTPD_SOURCE_HOME); ./configure --prefix=${current_dir}deps/libs/microhttpd/ --exec-prefix=${current_dir}deps/libs/microhttpd/ --enable-shared=NO --disable-doc --disable-examples --disable-curl --disable-https; make; make install;
+	cd $(MICROHTTPD_SOURCE_HOME); ./configure CC="/usr/bin/clang -arch i386 -arch x86_64" \
+																						CXX="/usr/bin/clang++ -arch i386 -arch x86_64" \
+																						CPP="/usr/bin/clang -E" CXXCPP="/usr/bin/clang++ -E" \
+																						--prefix=${current_dir}deps/libs/microhttpd/ --exec-prefix=${current_dir}deps/libs/microhttpd/ --enable-shared=NO --disable-doc --disable-examples --disable-curl --disable-https; make; make install;
 endif
+
+
+
+
+
+
+
+
 
 setup_server: _variables deps/microhttpd deps/libs/microhttpd
 	mkdir -p test

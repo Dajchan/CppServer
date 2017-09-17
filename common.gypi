@@ -22,6 +22,7 @@
       'CLANG_CXX_LANGUAGE_STANDARD': 'c++11',
       'CLANG_CXX_LIBRARY': 'libc++',
       'CLANG_ENABLE_OBJC_ARC': 'YES',
+      'ARCHS': ['x86_64', 'i386'],
     },
     'conditions': [
       ['OS=="darwin"',

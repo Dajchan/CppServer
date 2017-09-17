@@ -41,6 +41,8 @@ namespace px {
         void _load_content();
         void _flush_cache();
         
+        void _load_blogs(const string& dir);
+        
         Application(const char *directory);
         Application(const Application& src) = delete;
         Application& operator=(const Application& rhs) = delete;

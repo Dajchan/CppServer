@@ -37,6 +37,7 @@
       ],
       'sources': [
         '<!@(find src -name "*.cpp" -o -name "*.hpp" -o -name "*.h")',
+        '<!@(find test -name "*.cpp" -o -name "*.hpp" -o -name "*.h")',
       ],
       'sources!': ['src/main.cpp'],
       'include_dirs': [

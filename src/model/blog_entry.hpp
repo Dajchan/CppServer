@@ -8,7 +8,7 @@ namespace px {
     
     class BlogEntry {
     public:
-        static BlogEntry_p New(const string& title, const string& identifier);
+        static BlogEntry_p New(const string& title, const string& identifier, Resource_p description);
         
         ~BlogEntry();
         
@@ -20,17 +20,19 @@ namespace px {
         const vector<Photo_p>& photos() const;
         const string& title() const;
         const string& identifier() const;
-
+        
+        const Resource_p description() const;
         
     private:
         string m_title;
         string m_identifier;
+        Resource_p m_description;
         
         vector<Resource_p> m_resources;
         vector<Photo_p> m_photos;
         unordered_map<string, Photo_p> m_photos_map;
         
-        BlogEntry(const string& title, const string& identifier);
+        BlogEntry(const string& title, const string& identifier, Resource_p description);
         BlogEntry() = delete;
         BlogEntry(const BlogEntry& src) = delete;
         BlogEntry& operator=(const BlogEntry& rhs) = delete;
