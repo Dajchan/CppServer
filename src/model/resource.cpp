@@ -51,7 +51,7 @@ char * Resource::load(size_t *length) const {
     
     fp = fopen ( m_path.c_str() , "rb" );
     if( !fp ) {
-        perror(m_path.c_str()),exit(1);
+        perror(m_path.c_str());exit(1);
     }
     
     fseek( fp , 0L , SEEK_END);
@@ -63,12 +63,12 @@ char * Resource::load(size_t *length) const {
         /* allocate memory for entire content */
         buffer = (char *)malloc(lSize);
         if( !buffer ) {
-            fclose(fp),fputs("memory alloc fails",stderr),exit(1);
+            fclose(fp);fputs("memory alloc fails",stderr);exit(1);
         }
         
         /* copy the file into the buffer */
         if( 1!=fread( buffer , lSize, 1 , fp) ) {
-            fclose(fp),free(buffer),fputs("entire read fails",stderr),exit(1);
+            fclose(fp);free(buffer);fputs("entire read fails",stderr);exit(1);
         }
     }
     

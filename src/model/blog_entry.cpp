@@ -9,15 +9,24 @@
 #include "blog_entry.hpp"
 #include "logger.hpp"
 #include "mime_type.hpp"
+#include "helper.hpp"
 
 using namespace px;
 
 BlogEntry_p BlogEntry::New(const string& title, const string& identifier, Resource_p description) {
-    LogDebug("BlogEntry: %s %s", title.c_str(), identifier.c_str());
-    return BlogEntry_p(new BlogEntry(title, identifier, description));
+    auto comps = px::split(title, "#");
+    if (comps.size() >= 2) {
+        return BlogEntry_p(new BlogEntry(px::join(++(comps.begin()), comps.end(), "", [](const string& element) {
+            return element;
+        }), identifier, description));
+    } else {
+        return BlogEntry_p(new BlogEntry(title, identifier, description));
+    }
 }
 
-BlogEntry::BlogEntry(const string& title, const string& identifier, Resource_p description) : m_title(title), m_identifier(identifier), m_description(description) {}
+BlogEntry::BlogEntry(const string& title, const string& identifier, Resource_p description) : m_title(title), m_identifier(identifier), m_description(description) {
+    LogDebug("BlogEntry: %s %s", title.c_str(), identifier.c_str());
+}
 
 BlogEntry::~BlogEntry() {}
 
