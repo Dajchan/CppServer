@@ -45,7 +45,7 @@ namespace px {
     private:
         static unordered_map<string, Response_p> m_page_cache;
         static std::mutex m_mutex;
-        static shared_ptr<std::pair<string, string>> m_html_parts;
+        static shared_ptr<std::vector<string>> m_html_parts;
     };
 }
 

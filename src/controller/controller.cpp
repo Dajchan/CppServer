@@ -7,7 +7,7 @@ using namespace px;
 
 unordered_map<string, Response_p> HTMLController::m_page_cache;
 std::mutex HTMLController::m_mutex;
-shared_ptr<std::pair<string, string>> HTMLController::m_html_parts;
+shared_ptr<std::vector<string>> HTMLController::m_html_parts;
 
 Response_p HTMLController::call(HTTP_Method method, Hash_p params) {
     std::lock_guard<std::mutex> lock(m_mutex);
@@ -36,7 +36,14 @@ Response_p HTMLController::call(HTTP_Method method, Hash_p params) {
                 px::split(out, "<!-- YIELD_CONTENT -->", parts);
                 
                 if (parts.size() == 2) {
-                    m_html_parts = shared_ptr<std::pair<string, string>>(new std::pair<string, string>(parts.front(), parts.back()));
+                    vector<string> top_parts;
+                    px::split(parts.front(), "<!-- YIELD_PAGE_NAME -->", top_parts);
+
+                    m_html_parts = shared_ptr<std::vector<string>>(new std::vector<string>({
+                        top_parts.front(),
+                        top_parts.back(),
+                        parts.back()
+                    }));
                 }
             }
         } else {
@@ -44,13 +51,23 @@ Response_p HTMLController::call(HTTP_Method method, Hash_p params) {
         }
     }
     if (m_html_parts) {
-        ss << m_html_parts->first;
+        ss << m_html_parts->front();
+        auto v = params->get(px::Param::ActionName);
+        if (v && v->string_value().size() >= 2) {
+            
+            ss << v->string_value().substr(1, v->string_value().size()-1);
+        } else {
+            ss << key;
+        }
+        
+        
+        ss << m_html_parts->at(1);
         auto status = body(ss, params);
         if (status == 404) {
             return nullptr;
         }
         
-        ss << m_html_parts->second;
+        ss << m_html_parts->back();
         
         auto response = Response::New(ss.str(), status, "text/html");
         if (!key.empty() && response) {
