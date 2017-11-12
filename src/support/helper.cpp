@@ -202,6 +202,7 @@ vector<string> px::dir_content(const char* path, FileType type) {
     } else {
         printf("%s is not a directory\n", path);
     }
+    std::sort(content.begin(), content.end());
     return content;
 }
 
