@@ -20,7 +20,7 @@ std::once_flag Logger::m_onceFlag;
 Logger& Logger::Instance() {
     std::call_once(m_onceFlag, [] {
         m_instance.reset(new Logger);
-        m_instance->set_log_level(px::LogLevelDebug);
+        m_instance->set_log_level(px::LogLevelInfo);
     });
     return *m_instance.get();
 }
